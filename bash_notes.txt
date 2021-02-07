@@ -1,0 +1,100 @@
+phil welsby - 5 feb 2021
+notes from https://linuxconfig.org/bash-scripting-tutorial-for-beginners
+
+Input, Output and Error Redirections
+------------------------------------
+
+Normally commands executed on GNU/Linux command line either produce output, 
+require input or throw an error message. This is a fundamental concept for 
+shell scripting as well as for working with GNU/Linux's command line in general. 
+
+Every time, you execute a command, three possible outcomes might happen. The 
+first scenario is that the command will produce an expected output, second, 
+the command will generate an error, and lastly, your command might not produce 
+any output at all:
+
+What are we most interested in here is the output of both ls -l foobar commands. 
+Both commands produced an output which by default is displayed on your terminal. 
+However, both outputs are fundamentally different. 
+
+linuxconfig.org:~$ ls -l foobar
+ls: cannot access 'foobar': No such file or directory
+linuxconfig.org:~$ touch foobar
+linuxconfig.org:~$ ls -l foobar
+-rw-r--r-- 1 linuxconfig linuxconfig 0 Jul 28 10:08 foobar
+linuxconfig.org:~$
+
+The first command tries to list non-existing file foobar which, in turn, produces 
+a standard error output (stderr). Once the file is created by touch command, the 
+second execution of the ls command produces standard output (stdout). 
+
+The difference between stdout and stderr output is an essential concept as 
+it allows us to a threat, that is, to redirect each output separately. 
+The > notation is used to redirect stdout to a file whereas 2> notation is 
+used to redirect stderr and &> is used to redirect both stdout and stderr. 
+The cat command is used to display a content of any given file.
+
+linuxconfig.org:~$ ls foobar barfoo
+ls: cannot access 'barfoo': No such file or directory                    
+foobar                                                                                                    
+linuxconfig.org:~$ ls foobar barfoo > stdout.txt                                                          
+ls: cannot access 'barfoo': No such file or directory                                                     
+linuxconfig.org:~$ ls foobar barfoo 2> stderr.txt                                                         
+foobar                                                                                                    
+linuxconfig.org:~$ ls foobar barfoo &> stdoutandstderr.txt                                                
+linuxconfig.org:~$ cat stdout.txt                                                                         
+foobar                                                                                                    
+linuxconfig.org:~$ cat stderr.txt                                                                         
+ls: cannot access 'barfoo': No such file or directory                                                     
+linuxconfig.org:~$ cat stdoutandstderr.txt                                                                
+ls: cannot access 'barfoo': No such file or directory                                                     
+foobar                                                                                                    
+linuxconfig.org:~$   
+
+Numeric and String Comparisons
+------------------------------
+
+The following table lists rudimentary comparison operators for both 
+numbers and strings:
+
+Description         Numeric Comparison     String Comparison
+-----------         ------------------     -----------------
+less than           -lt                    <
+greater than        -gt                    >
+equal               -eq                    =
+not equal           -ne                    !=
+less or equal       -le                    N/A
+greater or equal    -ge                    N/A
+
+Example
+-------
+
+#!/bin/bash
+
+string_a="UNIX"
+string_b="GNU"
+
+echo "Are $string_a and $string_b strings equal?"
+[ $string_a = $string_b ]
+echo $?
+
+num_a=100
+num_b=100
+
+echo "Is $num_a equal to $num_b ?" 
+[ $num_a -eq $num_b ]
+echo $?
+
+Output will look like this:
+---------------------------
+
+$ ./compare.sh 
+Are UNIX and GNU strings equal?
+1
+Is 100 equal to 100 ?
+0
+
+Conditional Statements
+----------------------
+
+
